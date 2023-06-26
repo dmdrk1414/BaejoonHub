@@ -31,14 +31,14 @@ public class Main {
 
         int count = 0;  // 연결 요소 개수
 
-        for (int i = 0; i < n + 1; i++) {
+        for (int i = 1; i < n + 1; i++) {
             if (!visited[i]) {
                 count++;
                 DFS(i);
             }
         }
 
-        System.out.println(count - 1);
+        System.out.println(count );
     }
 
     private static void DFS(int v) {
