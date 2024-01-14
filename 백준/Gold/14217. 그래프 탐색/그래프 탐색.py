@@ -35,7 +35,8 @@ def bfs(start):
 
         for idx in range(len(L[value])):
             if L[value][idx] == 1 and not visited[idx]:
-                que.append([idx, path + 1])
+                que.append([idx, distance[value] + 1])
+                # que.append([idx, path + 1])
                 visited[idx] = True
     return distance
 
