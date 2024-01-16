@@ -57,21 +57,25 @@ board = [list(map(int,input().split())) for _ in range(N)]
 
 
 #  BFS
+# safe_zone의 길이 -3 (벽을 3개 세우니까) 을 하고
+# ch_virus를 만든다(여기서 고생)
+# virus 위치를 건들지 않고 각각 다른 ch_board를 탐색하려면 virus 위치도 처음에 있는 위치로 고정해두어야 한다
+# 나머지는 상하좌우를 탐색하고 ch_board가 비어있을 경우 append하며 끝까지 탐색하면 된다
 def BFS():
     global res
-    cnt = len(safe_zone)-3
-    ch_virus = deque([])
+    cnt = len(safe_zone)-3 # safe_zone의 길이 -3 (벽을 3개 세우니까) 을 하고
+    ch_virus = deque([]) # ch_virus를 만든다(여기서 고생)
     for x,y in virus:
-        ch_virus.append((x,y))
+        ch_virus.append((x,y)) # virus 위치를 건들지 않고 각각 다른 ch_board를 탐색하려면 virus 위치도 처음에 있는 위치로 고정해두어야 한다
     while ch_virus:
         xx,yy = ch_virus.popleft()
         for i in range(4):
-            nx = xx + dx[i]
-            ny = yy + dy[i]
+            nx = xx + dx[i] # 좌, 우 탐색
+            ny = yy + dy[i] # 상, 하 탐색
             if 0<=nx<N and 0<=ny<M and ch_board[nx][ny] == 0:
-                ch_board[nx][ny] = 2
+                ch_board[nx][ny] = 2 # 감염이 되었으니 2로 만들어 준다.
                 ch_virus.append((nx,ny))
-                cnt-=1
+                cnt-=1 # 바이러스가 감염되었으니 sefe_zone이 줄어든다.
     res = max(res,cnt)
 
 # 준비 1
@@ -82,15 +86,16 @@ dx = [-1,1,0,0]
 dy = [0,0,-1,1]
 
 #  준비 2
+# 준비는 safe_zone과 virus존의 그래프를 만들어라
 for i in range(N):
     for j in range(M):
         if board[i][j] == 0:
-            safe_zone.append((i,j))
+            safe_zone.append([i,j])
         elif board[i][j] == 2:
-            virus.append((i,j))
+            virus.append([i,j])
 
 #  조합
-for comb in combinations(safe_zone,3):
+for comb in combinations(safe_zone,3): # safe_zone 중에 3개을 조합으로 뽑는다.
     ch_board = copy.deepcopy(board)
     for x,y in comb:
         ch_board[x][y] = 1
