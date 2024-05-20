@@ -2,66 +2,106 @@ import java.io.*;
 import java.util.*;
 
 public class Main {
+    /*
+  103000509
+  002109400
+  000704000
+  300502006
+  060000050
+  700803004
+  000401000
+  009205800
+  804000107
+
+     */
     static FastReader scan = new FastReader();
-    static int[][] board = new int[9][9];
-    
-    public static void main(String[] args) {
-        input();
-        solve(0, 0);
-    }
+    static StringBuilder sb = new StringBuilder();
+    static int[][] board;
+    static List<int[]> checks;
 
     static void input() {
+        checks = new ArrayList<>();
+
+        board = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            board[i] = new int[9];
+        }
+
         for (int i = 0; i < 9; i++) {
             String[] input = scan.nextLine().split("");
+
             for (int j = 0; j < 9; j++) {
                 board[i][j] = Integer.parseInt(input[j]);
+                if (board[i][j] == 0) {
+                    checks.add(new int[]{i, j});
+                }
             }
         }
+
     }
 
-    static boolean solve(int row, int col) {
-        if (col == 9) {
-            return solve(row + 1, 0);
-        }
-        if (row == 9) {
-            printBoard();
-            return true;
-        }
-        if (board[row][col] != 0) {
-            return solve(row, col + 1);
+    private static boolean recur(final int x, final int y) {
+        if (y == 9) {
+            return recur(x + 1, 0);
         }
 
-        for (int num = 1; num <= 9; num++) {
-            if (isValid(row, col, num)) {
-                board[row][col] = num;
-                if (solve(row, col + 1)) {
+        if (x == 9) {
+            print();
+            return true;
+        }
+
+        if (board[x][y] != 0) {
+            return recur(x, y + 1);
+        }
+
+        // 스토쿠에 넣는 숫자
+        for (int i = 1; i <= 9; i++) {
+            if (isValid(x, y, i)) {
+                board[x][y] = i;
+                if (recur(x, y + 1)) {
                     return true;
                 }
-                board[row][col] = 0;
+                board[x][y] = 0;
             }
         }
+
         return false;
     }
 
-    static boolean isValid(int row, int col, int num) {
+    static void pro() {
+//        print();
+        recur(0, 0);
+//        print();
+    }
+
+    public static void main(String[] args) {
+        input();
+        pro();
+    }
+
+    // 0 <= x, y <= 8 까지의 범위
+    public static boolean isValid(int x, int y, int target) {
         for (int i = 0; i < 9; i++) {
-            if (board[row][i] == num || board[i][col] == num) {
+//      System.out.println(board[i][y] + " " + target);
+            if (board[x][i] == target || board[i][y] == target) {
                 return false;
             }
         }
-        int boxRowStart = (row / 3) * 3;
-        int boxColStart = (col / 3) * 3;
-        for (int i = boxRowStart; i < boxRowStart + 3; i++) {
-            for (int j = boxColStart; j < boxColStart + 3; j++) {
-                if (board[i][j] == num) {
+        // 정사각형
+        int start_squ_x = (x / 3) * 3;
+        int start_squ_y = (y / 3) * 3;
+
+        for (int i = start_squ_x; i < start_squ_x + 3; i++) {
+            for (int j = start_squ_y; j < start_squ_y + 3; j++) {
+                if (board[i][j] == target)
                     return false;
-                }
             }
         }
+
         return true;
     }
 
-    static void printBoard() {
+    static void print() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -80,6 +120,33 @@ public class Main {
             br = new BufferedReader(new InputStreamReader(System.in));
         }
 
+        public FastReader(String s) throws FileNotFoundException {
+            br = new BufferedReader(new FileReader(new File(s)));
+        }
+
+        String next() {
+            while (st == null || !st.hasMoreElements()) {
+                try {
+                    st = new StringTokenizer(br.readLine());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return st.nextToken();
+        }
+
+        int nextInt() {
+            return Integer.parseInt(next());
+        }
+
+        long nextLong() {
+            return Long.parseLong(next());
+        }
+
+        double nextDouble() {
+            return Double.parseDouble(next());
+        }
+
         String nextLine() {
             String str = "";
             try {
@@ -90,4 +157,5 @@ public class Main {
             return str;
         }
     }
+
 }
