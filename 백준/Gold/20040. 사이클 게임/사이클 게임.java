@@ -74,7 +74,7 @@ public class Main {
   static int find(int root) {
     if (par[root] == root) return par[root];
 
-    return par[root] = find(par[root]);
+    return  find(par[root]);
   }
 
   static void union(int a, int b) {
