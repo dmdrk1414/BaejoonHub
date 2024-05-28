@@ -59,20 +59,20 @@ import java.util.*;
 class Solution {
   static StringBuilder sb = new StringBuilder();
   static int N;
-  static Point coporation;
+  static Point coporationPoint;
   static Point homePoint;
   static Point[] points;
   static Scanner sc = new Scanner(System.in);
   static boolean[] visited;
-  static int min_distance;
+  static int MIN;
 
   private static void input() {
     N = sc.nextInt();
-    coporation = new Point(sc.nextInt(), sc.nextInt());
+    coporationPoint = new Point(sc.nextInt(), sc.nextInt());
     homePoint = new Point(sc.nextInt(), sc.nextInt());
     points = new Point[N + 1];
     visited = new boolean[N + 1];
-    min_distance = Integer.MAX_VALUE;
+    MIN = Integer.MAX_VALUE;
 
     for (int i = 1; i <= N; i++) {
       points[i] = new Point(sc.nextInt(), sc.nextInt());
@@ -80,35 +80,30 @@ class Solution {
   }
 
   private static void pro() {
-    dfs(1, 0, coporation);
+    dfs(coporationPoint, 0, 0);
   }
 
-  private static void dfs(int depth, int distance, Point lastPoint) {
-    if (distance >= min_distance) {
+  private static void dfs(final Point lastPoint, final int lastDistance, final int depth) {
+    if (lastDistance >= MIN)
       return;
-    }
-
-    if (depth == N + 1) {
-      // 모든 고객을 확인하고, 집으로 돌아가는 길
-      int final_distance = distance + distance(lastPoint, homePoint);
-      if (final_distance < min_distance) {
-        min_distance = final_distance;
-        return;
-      }
+    if (depth == N) {
+      int result_distance = (lastDistance + distance(homePoint, lastPoint));
+      MIN = Math.min(MIN, result_distance);
     } else {
       for (int i = 1; i <= N; i++) {
         if (visited[i]) continue;
         visited[i] = true;
-        int next_distance = distance + distance(lastPoint, points[i]);
-        dfs(depth + 1, next_distance, points[i]);
+        int nextDistance = distance(lastPoint, points[i]);
+        dfs(points[i], nextDistance + lastDistance, depth + 1);
         visited[i] = false;
       }
     }
   }
 
-  private static int distance(final Point point1, final Point point2) {
-    return Math.abs(point1.x - point2.x) + Math.abs(point1.y - point2.y);
+  private static int distance(final Point homePoint, final Point lastPoint) {
+    return Math.abs(homePoint.x - lastPoint.x) + Math.abs(homePoint.y - lastPoint.y);
   }
+
 
   public static void main(String args[]) throws Exception {
     int T;
@@ -118,26 +113,7 @@ class Solution {
       input();
       pro();
 
-      System.out.printf("#%d %d\n", test_case, min_distance);
-    }
-  }
-
-  static class Edge implements Comparable<Edge> {
-    int start, end;
-    int weight;
-
-    public Edge(int start, int end, int weight) {
-      this.start = start;
-      this.end = end;
-      this.weight = weight;
-    }
-
-    @Override
-    public int compareTo(Edge o) {
-      if (this.weight != o.weight) {
-        return this.weight - o.weight;
-      }
-      return 0;
+      System.out.printf("#%d %d\n", test_case, MIN);
     }
   }
 
