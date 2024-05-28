@@ -37,8 +37,7 @@ class Solution {
 
   private static void pro() {
     // 공통의 조상으 찾는다.
-    find(find_one);
-    com_par = find(find_two);
+    com_par = find(find_one, find_two);
 
     // 서브 트리의 노드 갯수 세기
     dfs(1);
@@ -57,12 +56,21 @@ class Solution {
   }
 
   // 공통 조상 찾기
-  private static int find(final int node) {
-    if (visited[node]) return node;
-    if (node == 1) return 0;
+  private static int find(int find_one, int find_two) {
+    // find_two 에서 루트까지 체크를 해놓는다.
+    while (find_one > 0) {
+      visited[find_one] = true;
+      find_one = par[find_one];
+    }
 
-    visited[node] = true;
-    return find(par[node]);
+    // find_two 에서 루트로 이동하면서 처음으로 만나는 체크된 정점을 찾는다.
+    while (find_two > 0) {
+      find_two = par[find_two];
+
+      if (visited[find_two]) return find_two;
+    }
+
+    return 1;
   }
 
   public static void main(String args[]) throws Exception {
